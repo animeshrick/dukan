@@ -74,3 +74,13 @@ class PasswordNotMatchError(DukanBaseException):
         else:
             super().__init__(msg)
         logging.error(self.msg)
+
+
+
+class NotValidUserID(DukanBaseException):
+    def __init__(self, msg: Optional[str] = None):
+        if not msg:
+            self.msg = "User not found."
+        else:
+            super().__init__(msg)
+        logging.error(self.msg)
