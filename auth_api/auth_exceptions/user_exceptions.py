@@ -84,3 +84,12 @@ class NotValidUserID(DukanBaseException):
         else:
             super().__init__(msg)
         logging.error(self.msg)
+
+
+class NotValidUserEmail(DukanBaseException):
+    def __init__(self, msg: Optional[str] = None):
+        if not msg:
+            self.msg = "Please provide a valid email."
+        else:
+            super().__init__(msg)
+        logging.error(self.msg)

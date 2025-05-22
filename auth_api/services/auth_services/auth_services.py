@@ -5,6 +5,7 @@ from auth_api.export_types.request_data_types.register_user import RegisterUserR
 from auth_api.export_types.request_data_types.login_user import LoginRequestType
 from auth_api.export_types.user_types.export_user import ExportUser
 from auth_api.models.user_models.user import User
+from auth_api.serializers.forgor_password_serializer import ForgotPasswordSerializer
 from auth_api.serializers.user_serializer import UserSerializer
 
 
@@ -186,14 +187,28 @@ class AuthServices:
     #
     @staticmethod
     def get_user_details(uid: str) -> ExportUser:
-        user = User.objects.get(id=uid, is_deleted=False)
+        user = User.objects.get(id=uid, is_deleted=False, is_active=True)
         user_details = ExportUser(with_id=True, **user.model_to_dict())
         return user_details
+
+    #
+    @staticmethod
+    def forgot_password_service(email: str, new_password: str) -> str:
+        request: dict = {
+            "email": email,
+            "new_password": new_password,
+        }
+        resp_data: str = ForgotPasswordSerializer().retain_forgot_password(data=request)
+
+        if resp_data:
+            return resp_data
+        else:
+            raise UserNotFoundError()
 
     @staticmethod
     def get_user_details_by_id(requested_user_id: str, uid: str) -> ExportUser:
         try:
-            requested_user = User.objects.get(id=requested_user_id, is_deleted=False)
+            requested_user = User.objects.get(id=requested_user_id, is_deleted=False, is_active=True)
             requested_user = ExportUser(**requested_user.model_to_dict())
             return requested_user
         except ObjectDoesNotExist:
